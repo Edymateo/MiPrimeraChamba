@@ -10,4 +10,6 @@ public class MiClase {
     private int precioCortado = (int) precio ;
     private int entero = 5;
     private double decimal = entero;
+
+    
 }
