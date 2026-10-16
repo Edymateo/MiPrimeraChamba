@@ -3,11 +3,6 @@ import java.lang.Math;
 public class Punto {
     private int x,y;
 
-    public Punto(){
-        this.x = 0;
-        this.y = 0;
-    }
-
     public Punto(int x, int y){
         this.x = x;
         this.y = y;
@@ -31,6 +26,14 @@ public class Punto {
 
     public double modulo() {
         return (double) Math.sqrt(this.x * this.x + this.y * this.y);
+    }
+
+    public Punto(int x){
+        this(x,x);
+    }
+
+    public Punto(){
+        this(0,0);
     }
 
 }

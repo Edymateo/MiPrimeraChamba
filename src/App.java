@@ -17,5 +17,15 @@ public class App {
         System.out.println(p2.getX());
         System.out.println(p2.getY());
 
+        Punto p3 = new Punto(8);
+
+        System.out.println(p3.getX());
+        System.out.println(p3.getY());
+
+        Punto p4 = new Punto();
+
+        System.out.println(p4.getX());
+        System.out.println(p4.getY());
+
     }
 }
