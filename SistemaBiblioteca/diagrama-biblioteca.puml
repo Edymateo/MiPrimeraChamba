@@ -1,0 +1,176 @@
+@startuml
+
+skinparam classBackgroundColor #1e1e2e
+skinparam classBorderColor #89b4fa
+skinparam classArrowColor #cba6f7
+skinparam classFontColor #cdd6f4
+skinparam classAttributeFontColor #a6e3a1
+skinparam backgroundColor #181825
+skinparam packageFontColor #cdd6f4
+skinparam packageBorderColor #89b4fa
+
+package com.biblioteca.modelo {
+
+  class Validador <<utility>> {
+    - Validador()
+    + {static} validarNombre(nombre: String): void
+    + {static} validarCodigo(codigo: String): void
+  }
+
+  abstract class Personal {
+    - nombre: String
+    - id: String
+    - area: String
+    + Personal(nombre, id, area)
+    + getNombre(): String
+    + getId(): String
+    + getArea(): String
+    + {abstract} generarReporte(): String
+  }
+
+  class Bibliotecario {
+    - prestamos: ArrayList<Prestamo>
+    + Bibliotecario(nombre, id, area)
+    + registrarPrestamo(fecha: String, lector: String, recurso: Recurso): void
+    + registrarPrestamo(fecha: String, lector: String, observacion: String, recurso: Recurso): void
+    - validarDatosBasicos(fecha: String, lector: String, recurso: Recurso): void
+    + generarReporte(): String
+    + getPrestamos(): ArrayList<Prestamo>
+  }
+
+  class Auxiliar {
+    - turno: String
+    + Auxiliar(nombre, id, area, turno)
+    + getTurno(): String
+    + generarReporte(): String
+  }
+
+  abstract class Recurso {
+    - titulo: String
+    - codigo: String
+    - anio: int
+    + Recurso(titulo, codigo, anio)
+    + getTitulo(): String
+    + getCodigo(): String
+    + getAnio(): int
+    + {abstract} obtenerInfo(): String
+  }
+
+  class Libro {
+    - autor: String
+    - paginas: int
+    + Libro(titulo, codigo, anio, autor, paginas)
+    + getAutor(): String
+    + getPaginas(): int
+    + obtenerInfo(): String
+  }
+
+  class RecursoDigital <<final>> {
+    - formato: String
+    - tamanoMB: int
+    + RecursoDigital(titulo, codigo, anio, formato, tamanoMB)
+    + getFormato(): String
+    + getTamanoMB(): int
+    + obtenerInfo(): String
+  }
+
+  class Prestamo {
+    - fecha: String
+    - observacion: String
+    - lector: String
+    - recurso: Recurso
+    - bibliotecario: Bibliotecario
+    + Prestamo(fecha, observacion, lector, recurso, bibliotecario)
+    + getInfo(): String
+    + getRecurso(): Recurso
+    + getBibliotecario(): Bibliotecario
+    + getFecha(): String
+  }
+
+  class Seccion {
+    - nombre: String
+    - capacidad: int
+    - recursos: ArrayList<Recurso>
+    + Seccion(nombre, capacidad)
+    + agregarRecurso(r: Recurso): void
+    + retirarRecurso(codigo: String): void
+    + buscarRecurso(codigo: String): Recurso
+    + listarRecursos(): void
+    + getNombre(): String
+    + getCapacidad(): int
+    + getRecursos(): ArrayList<Recurso>
+  }
+
+  class Biblioteca {
+    - nombre: String
+    - secciones: ArrayList<Seccion>
+    - personal: ArrayList<Personal>
+    + Biblioteca(nombre)
+    + agregarSeccion(nombre: String, capacidad: int): void
+    + agregarPersonal(p: Personal): void
+    + buscarSeccion(nombre: String): Seccion
+    + buscarRecurso(codigo: String): Recurso
+    + buscarBibliotecario(id: String): Bibliotecario
+    + listarBibliotecarios(): void
+    + generarReporteGeneral(): void
+    + getNombre(): String
+    + getSecciones(): ArrayList<Seccion>
+    + getPersonal(): ArrayList<Personal>
+  }
+}
+
+package com.biblioteca.excepciones {
+  class SeccionLlenaException {
+    + SeccionLlenaException(mensaje: String)
+  }
+  class RecursoNoEncontradoException {
+    + RecursoNoEncontradoException(codigo: String)
+  }
+  class PersonalNoEncontradoException {
+    + PersonalNoEncontradoException(id: String)
+  }
+  class PrestamoInvalidoException {
+    + PrestamoInvalidoException(mensaje: String)
+  }
+}
+
+class "java.lang.Exception" as Exception
+
+package com.biblioteca.app {
+  class App {
+    - {static} recursosRegistrados: ArrayList<Recurso>
+    - {static} biblioteca: Biblioteca
+    + {static} main(args: String[]): void
+    - {static} leerEntero(sc: Scanner, mensaje: String): int
+    - {static} buscarRecursoGlobal(codigo: String): Recurso
+  }
+}
+
+' Herencia
+Personal <|-- Bibliotecario
+Personal <|-- Auxiliar
+Recurso <|-- Libro
+Recurso <|-- RecursoDigital
+Exception <|-- SeccionLlenaException
+Exception <|-- RecursoNoEncontradoException
+Exception <|-- PersonalNoEncontradoException
+Exception <|-- PrestamoInvalidoException
+
+' Composición, agregación y asociación
+Biblioteca "1" *-- "3..*" Seccion
+Biblioteca "1" o-- "*" Personal
+Seccion "1" o-- "0..*" Recurso
+Bibliotecario "1" --> "0..*" Prestamo
+Prestamo --> "1" Recurso
+Prestamo --> "1" Bibliotecario
+
+' Dependencias
+Personal ..> Validador : usa
+Recurso ..> Validador : usa
+App ..> Biblioteca : usa
+
+note bottom of RecursoDigital : <<final>> no puede heredarse
+note bottom of Biblioteca : Composicion con Seccion
+note right of Seccion : Agregacion con Recurso
+
+@enduml
